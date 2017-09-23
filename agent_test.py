@@ -19,7 +19,17 @@ class IsolationTest(unittest.TestCase):
         self.player1 = "Player1"
         self.player2 = "Player2"
         self.game = isolation.Board(self.player1, self.player2)
+        self.minimaxPlayer = game_agent.MinimaxPlayer()
+        self.isoPlayer= game_agent.IsolationPlayer(2,game_agent.custom_score,10)
+#         self.minimaxPlayer2 = self.isoPlayer.MinimaxPlayer()
+    
+    def timer(self):
+        return 150
+    
+    def test_minimax(self):
+        self.assertEqual(self.minimaxPlayer.get_move(self.game, self.timer),)
 
 
 if __name__ == '__main__':
     unittest.main()
+#     game_agent.minimax(game, 3)
