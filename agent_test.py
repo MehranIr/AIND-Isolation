@@ -20,15 +20,22 @@ class IsolationTest(unittest.TestCase):
         self.player2 = "Player2"
         self.game = isolation.Board(self.player1, self.player2)
         self.minimaxPlayer = game_agent.MinimaxPlayer()
-        self.isoPlayer= game_agent.IsolationPlayer(2,game_agent.custom_score,10)
+        self.alphaBetaPlayer = game_agent.AlphaBetaPlayer()
+        self.isoPlayer= game_agent.IsolationPlayer(1,game_agent.custom_score,10)
 #         self.minimaxPlayer2 = self.isoPlayer.MinimaxPlayer()
     
     def timer(self):
         return 150
     
     def test_minimax(self):
-        self.assertEqual(self.minimaxPlayer.get_move(self.game, self.timer),)
+        print("test this: "+ self.game._player_1)
+        self.game._board_state = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 1, 1, 1, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 20, 14]
+        self.assertEqual(self.minimaxPlayer.get_move(self.game, self.timer),(2, 3))
 
+        
+#     def test_alphaBeta(self):
+#         self.assertEqual(self.alphaBetaPlayer.alphabeta(self.game, 2))
+        
 
 if __name__ == '__main__':
     unittest.main()
