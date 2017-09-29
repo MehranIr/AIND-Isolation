@@ -33,9 +33,7 @@ class IsolationTest(unittest.TestCase):
         self.assertEqual(self.minimaxPlayer.get_move(self.game, self.timer),(2, 3))
 
         
-#     def test_alphaBeta(self):
-#         self.assertEqual(self.alphaBetaPlayer.alphabeta(self.game, 2))
-        
+
 
 if __name__ == '__main__':
     unittest.main()
