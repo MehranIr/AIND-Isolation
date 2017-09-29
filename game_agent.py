@@ -131,12 +131,6 @@ class IsolationPlayer:
         self.TIMER_THRESHOLD = timeout
 
 
-class MinimaxPlayer(IsolationPlayer):
-    """Game-playing agent that chooses a move using depth-limited minimax
-    search. You must finish and test this player to make sure it properly uses
-    minimax to return a good move before the search time limit expires.
-    """
-
     def min_value(self, game, depth):
         """ Return the value for a win (+1) if the game is over,
         otherwise return the minimum value over all legal child
@@ -188,6 +182,14 @@ class MinimaxPlayer(IsolationPlayer):
 #         print ("==============================================")
 #         print ("result for Max value on Depth: "+str(depth)+" is " +str(v))
         return v
+
+
+
+class MinimaxPlayer(IsolationPlayer):
+    """Game-playing agent that chooses a move using depth-limited minimax
+    search. You must finish and test this player to make sure it properly uses
+    minimax to return a good move before the search time limit expires.
+    """
 
 
     def get_move(self, game, time_left):
@@ -350,8 +352,20 @@ class AlphaBetaPlayer(IsolationPlayer):
         """
         self.time_left = time_left
 
-        # TODO: finish this function!
-        raise NotImplementedError
+        # Initialize the best move so that this function returns something
+        # in case the search fails due to timeout
+        best_move = (-1, -1)
+
+        try:
+            # The try/except block will automatically catch the exception
+            # raised when the timer is about to expire.
+            return self.alphabeta(game, self.search_depth)
+
+        except SearchTimeout:
+            pass  # Handle any actions required after timeout as needed
+
+        # Return the best move from the last completed search iteration
+        return best_move
 
     def alphabeta(self, game, depth, alpha=float("-inf"), beta=float("inf")):
         """Implement depth-limited minimax search with alpha-beta pruning as
@@ -398,8 +412,39 @@ class AlphaBetaPlayer(IsolationPlayer):
                 each helper function or else your agent will timeout during
                 testing.
         """
-        if self.time_left() < self.TIMER_THRESHOLD:
-            raise SearchTimeout()
+#         if self.time_left() < self.TIMER_THRESHOLD:
+#             raise SearchTimeout()
 
         # TODO: finish this function!
-        return game.get_legal_moves(game.active_player)[0]
+        if game.active_player == game._player_1:
+#             print(str(game.active_player) + " location is: "+str(game.get_player_location(game.active_player)))
+#             print("move list is: "+str(move_list))
+            
+            # v is the place holder for the highest available score while bestMove is the move that has caused the score
+            bestMove =None
+            v = float("-inf")
+            for m in game.get_legal_moves():
+#                 print(str(game.active_player)+ " moved to location: " + str(m))
+                move_score= self.min_value(game.forecast_move(m),depth-1)
+                if v < move_score:
+                    v = move_score
+                    bestMove=m
+#             print ("===============================")
+#             print("final result is: "+ str(bestMove) + "for depth"+ str(depth)) 
+            return bestMove
+        else:
+            move_list= game.get_legal_moves(game.active_player)
+            print(str(game.active_player) + " location is: "+str(game.get_player_location(game.active_player)))
+            print("move list is: "+str(move_list))
+            
+            # v is the place holder for the lowest available score(best move for player2) while bestMove is the move that has caused the score
+            bestMove =None
+            v = float("inf")
+            for m in game.get_legal_moves():
+                move_score= self.max_value(game.forecast_move(m),depth-1)
+                if v > move_score:
+                    v = move_score
+                    bestMove=m
+#             print ("===============================")
+#             print("final result is: "+ str(bestMove)) 
+            return bestMove
