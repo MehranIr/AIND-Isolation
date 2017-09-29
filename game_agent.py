@@ -40,8 +40,13 @@ def custom_score(game, player):
 
     if game.is_winner(player):
         return float("inf")
-    test = float(len(game.get_legal_moves(player)))
-    print("list is :" + str(game.get_legal_moves(player)))
+    
+    print("list of move for " +str(game._player_1)+" is: "+ str(game.get_legal_moves(game._player_1)))
+    print("list of move for " +str(game._player_2)+" is: "+ str(game.get_legal_moves(game._player_2)))
+    own_moves = len(game.get_legal_moves(player))
+    opp_moves = len(game.get_legal_moves(game.get_opponent(player)))
+    test = float(own_moves - opp_moves)
+    
     return test
 
 
@@ -119,7 +124,7 @@ class IsolationPlayer:
         positive value large enough to allow the function to return before the
         timer expires.
     """
-    def __init__(self, search_depth=1, score_fn=custom_score, timeout=10.):
+    def __init__(self, search_depth=2, score_fn=custom_score, timeout=10.):
         self.search_depth = search_depth
         self.score = score_fn
         self.time_left = None
@@ -143,10 +148,11 @@ class MinimaxPlayer(IsolationPlayer):
         if game.utility(game.active_player) != 0:
             return float("inf")  # by Assumption 2
         if (depth ==0):
-            return self.score(game, game.inactive_player)
+            print("Calling the score module from Min")
+            return self.score(game, game._player_1)
         v = float("inf")
         move_list= game.get_legal_moves(game.active_player)
-        print("player location is: "+str(game.get_player_location(game.active_player)))
+        print("Min: " +str(game.active_player) + " location is: "+str(game.get_player_location(game.active_player)))
         print("move list is: "+str(move_list))
         for m in move_list:
             move_score= self.max_value((game.forecast_move(m)), (depth-1)) 
@@ -167,10 +173,11 @@ class MinimaxPlayer(IsolationPlayer):
         if game.utility(game.active_player) != 0:
             return float("-inf")  # by assumption 2
         if (depth ==0):
-            return self.score(game, game.inactive_player)
+            print("Calling the score module from Max")
+            return self.score(game, game._player_1)
         v = float("-inf")
         move_list= game.get_legal_moves(game.active_player)
-        print("player location is: "+str(game.get_player_location(game.active_player)))
+        print("Max: "+str(game.active_player) + " location is: "+str(game.get_player_location(game.active_player)))
         print("move list is: "+str(move_list))
         for m in move_list:
             move_score= self.min_value(game.forecast_move(m), (depth-1)) 
@@ -286,12 +293,13 @@ class MinimaxPlayer(IsolationPlayer):
 #                 Newgame= game.forecast_move(move)
 #                 max(v, self.minimax(Newgame, (depth-1))
             move_list= game.get_legal_moves(game.active_player)
-            print("player location is: "+str(game.get_player_location(game.active_player)))
+            print(str(game.active_player) + " location is: "+str(game.get_player_location(game.active_player)))
             print("move list is: "+str(move_list))
             
             bestMove =None
             v = float("-inf")
             for m in game.get_legal_moves():
+                print(str(game.active_player)+ " moved to location: " + str(m))
                 move_score= self.min_value(game.forecast_move(m),depth-1)
                 if v < move_score:
                     v = move_score
@@ -304,7 +312,7 @@ class MinimaxPlayer(IsolationPlayer):
         else:
             print("min")
             move_list= game.get_legal_moves(game.active_player)
-            print("player location is: "+str(game.get_player_location(game.active_player)))
+            print(str(game.active_player) + " location is: "+str(game.get_player_location(game.active_player)))
             print("move list is: "+str(move_list))
             
             bestMove =None
