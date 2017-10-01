@@ -128,7 +128,7 @@ class IsolationPlayer:
         positive value large enough to allow the function to return before the
         timer expires.
     """
-    def __init__(self, search_depth=4, score_fn=custom_score, timeout=10.):
+    def __init__(self, search_depth=1, score_fn=custom_score, timeout=10.):
         self.search_depth = search_depth
         self.score = score_fn
         self.time_left = None
@@ -158,7 +158,8 @@ class IsolationPlayer:
             if prune:
 #                     if m != (0,2):
 #                         continue
-                v = min(v, self.max_value((game.forecast_move(m)), (depth - 1), float("-inf"), beta, prune))
+#                 v = min(v, self.max_value((game.forecast_move(m)), (depth - 1), float("-inf"), beta, prune))
+                v = min(v, self.max_value((game.forecast_move(m)), (depth - 1), alpha, beta, prune))
                 if v < alpha or v == alpha:
                     return v
                 beta = min(beta, v)
@@ -189,7 +190,8 @@ class IsolationPlayer:
         print("move list is: "+str(game.get_legal_moves(game.active_player)))
         for m in game.get_legal_moves(game.active_player):
             if prune:
-                v = max(v, self.min_value(game.forecast_move(m), (depth - 1), alpha, float("inf"), prune))
+#                 v = max(v, self.min_value(game.forecast_move(m), (depth - 1), alpha, float("inf"), prune))
+                v = max(v, self.min_value(game.forecast_move(m), (depth - 1), alpha, beta, prune))
                 if v > beta or v == beta:
                     return v
                 alpha = max(alpha, v)
@@ -378,19 +380,19 @@ class AlphaBetaPlayer(IsolationPlayer):
         # in case the search fails due to timeout
         best_move = (-1, -1)
 
-        try:
+#         try:
             # The try/except block will automatically catch the exception
             # raised when the timer is about to expire.
-            return self.alphabeta(game, self.search_depth)
+        return self.alphabeta(game, self.search_depth)
 
-        except SearchTimeout:
-            pass  # Handle any actions required after timeout as needed
+#         except SearchTimeout:
+#             pass  # Handle any actions required after timeout as needed
 
         # Return the best move from the last completed search iteration
-        return best_move
+#         return best_move
 
 #     def alphabeta(self, game, depth, alpha=float("-inf"), beta=float("inf")):
-    def alphabeta(self, game, depth, alpha=5, beta=1):
+    def alphabeta(self, game, depth, alpha=float("-inf"), beta=float("inf")):
         """Implement depth-limited minimax search with alpha-beta pruning as
         described in the lectures.
 
@@ -448,13 +450,18 @@ class AlphaBetaPlayer(IsolationPlayer):
             v = float("-inf")
             for m in game.get_legal_moves():
 #                 print(str(game.active_player)+ " moved to location: " + str(m))
-#                 if m != (5, 3):
+#                 if m != (4, 4) and m != (0, 5):
 #                     continue
-                move_score = self.min_value(game.forecast_move(m), depth - 1, alpha, float("inf"), True)
+                move_score = self.min_value(game.forecast_move(m), depth - 1, alpha, beta, True)
+                if move_score > beta or move_score == beta:
+                    return move_score
                 if v < move_score: 
                     v = move_score
                     bestMove = m
                     alpha = max(alpha, v)
+                else:
+                    if v == move_score and bestMove == None:
+                        bestMove = m
 #             print ("===============================")
 #             print("final result is: "+ str(bestMove) + "for depth"+ str(depth)) 
 #             print ("alphabeta best score is: " + str(v))
@@ -468,7 +475,7 @@ class AlphaBetaPlayer(IsolationPlayer):
             bestMove = None
             v = float("inf")
             for m in game.get_legal_moves():
-                move_score = self.max_value(game.forecast_move(m), depth - 1, float("-inf"), beta, True)
+                move_score = self.max_value(game.forecast_move(m), depth - 1, alpha, beta, True)
                 if v > move_score:
                     v = move_score
                     bestMove = m

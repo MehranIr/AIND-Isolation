@@ -25,7 +25,7 @@ class IsolationTest(unittest.TestCase):
 #         self.minimaxPlayer2 = self.isoPlayer.MinimaxPlayer()
     
     def timer(self):
-        return 150
+        return 150000
     
 #     def test_minimax(self):
 #         print("test this: "+ self.game._player_1)
@@ -35,7 +35,8 @@ class IsolationTest(unittest.TestCase):
         
     def test_alphaBeta(self):
         print("test this: "+ self.game._player_1)
-        self.game._board_state = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 1, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 0, 0, 0, 0, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 57, 51]
+        self.game._board_state = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 23, 33]
+#         self.assertEqual(self.alphaBetaPlayer.alphabeta(self.game, 4, alpha=3, beta=3),(2, 3))
         self.assertEqual(self.alphaBetaPlayer.get_move(self.game, self.timer),(2, 3))
 
 
