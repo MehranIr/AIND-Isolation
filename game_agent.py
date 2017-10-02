@@ -35,14 +35,22 @@ def custom_score(game, player):
     float
         The heuristic value of the current game state to the specified player.
     """
+    """
+    This heuristic tries to keep a high number on its possible options while trying to reduce the opponnent moves and staying in the center
+    """
     if game.is_loser(player):
         return float("-inf")
 
     if game.is_winner(player):
         return float("inf")
 
-    print(str(game.get_legal_moves(player)))
-    return float(len(game.get_legal_moves(player)))
+    w, h = game.width / 2., game.height / 2.
+    y, x = game.get_player_location(player)
+    distance=  float((h - y)**2 + (w - x)**2)
+    
+    own_moves = len(game.get_legal_moves(player))
+    opp_moves = len(game.get_legal_moves(game.get_opponent(player)))
+    return float(2*own_moves -3*opp_moves - distance)
 
 
 
@@ -68,17 +76,13 @@ def custom_score_2(game, player):
     float
         The heuristic value of the current game state to the specified player.
     """
-    if game.is_loser(player):
-        return float("-inf")
-
-    if game.is_winner(player):
-        return float("inf")
-
-    w, h = game.width / 2., game.height / 2.
-    y, x = game.get_player_location(player)
-    print("score is "+ str(float((h - y)**2 + (w - x)**2)))
-    return float((h - y)**2 + (w - x)**2)
-
+    own_moves = len(game.get_legal_moves(player))
+    opp_moves = len(game.get_legal_moves(game.get_opponent(player)))
+    if opp_moves < 3:
+        #play aggressive!
+        return own_moves +(6 - (3* opp_moves))
+    else:
+        return 2*own_moves - opp_moves
 
 def custom_score_3(game, player):
     """Calculate the heuristic value of a game state from the point of view
@@ -103,9 +107,36 @@ def custom_score_3(game, player):
         The heuristic value of the current game state to the specified player.
     """
     # TODO: finish this function!
-    raise NotImplementedError
+    if game.is_loser(player):
+        return float("-inf")
+
+    if game.is_winner(player):
+        return float("inf")
+
+    own_moves = len(game.get_legal_moves(player))
+    opp_moves = len(game.get_legal_moves(game.get_opponent(player)))
+    if opp_moves < 3: # promote getting to an issue to suppress the opponent
+        return (8 - (4*opp_moves)+own_moves)
+
+    return (3* own_moves) - opp_moves 
 
 
+def custom_score_3(game, player):
+    if game.is_loser(player):
+        return float("-inf")
+
+    if game.is_winner(player):
+        return float("inf")
+
+    own_moves = len(game.get_legal_moves(player))
+    opp_moves = len(game.get_legal_moves(game.get_opponent(player)))
+    
+    if opp_moves < 3 and own_moves > 2:
+        return (8 - (4*opp_moves)+own_moves)
+    elif own_moves < 3 and opp_moves >2:
+        return  own_moves -8 
+    else:
+        return own_moves- opp_moves
 class IsolationPlayer:
     """Base class for minimax and alphabeta agents -- this class is never
     constructed or tested directly.
@@ -128,11 +159,11 @@ class IsolationPlayer:
         positive value large enough to allow the function to return before the
         timer expires.
     """
-    def __init__(self, search_depth=2, score_fn=custom_score, timeout=10.):
+    def __init__(self, search_depth=3, score_fn=custom_score, timeout=10):
         self.search_depth = search_depth
         self.score = score_fn
         self.time_left = None
-        self.TIMER_THRESHOLD = timeout
+        self.TIMER_THRESHOLD = 2.5* timeout
 
 
     def min_value(self, game, depth, alpha=float("-inf"), beta=float("inf"), prune=False):
@@ -302,12 +333,12 @@ class MinimaxPlayer(IsolationPlayer):
                         bestMove = m
 #             print ("===============================")
 #             print("final result is: "+ str(bestMove) + "for depth"+ str(depth)) 
-            print ("minimax best score is: " + str(v))
+#             print ("minimax best score is: " + str(v))
             return bestMove
         else:
             move_list = game.get_legal_moves(game.active_player)
-            print(str(game.active_player) + " location is: " + str(game.get_player_location(game.active_player)))
-            print("move list is: " + str(move_list))
+#             print(str(game.active_player) + " location is: " + str(game.get_player_location(game.active_player)))
+#             print("move list is: " + str(move_list))
             
             # v is the place holder for the lowest available score(best move for player2) while bestMove is the move that has caused the score
             bestMove = None
@@ -319,7 +350,7 @@ class MinimaxPlayer(IsolationPlayer):
                     bestMove = m
 #             print ("===============================")
 #             print("final result is: "+ str(bestMove)) 
-            print ("minimax best score is: " + str(v))
+#             print ("minimax best score is: " + str(v))
             return bestMove
 
 
